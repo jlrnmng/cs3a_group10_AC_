@@ -14,13 +14,11 @@
         <div class="border-end bg-white" id="sidebar-wrapper">
             <div class="sidebar-heading border-bottom bg-light">Crypto Features</div>
             <div class="list-group list-group-flush">
-                <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Dashboard</a>
-                <a href="{{ url_for('symmetric') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Symmetric</a>
-                <a href="{{ url_for('asymmetric') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Asymmetric</a>
-                <a href="{{ url_for('hashing') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Hashing</a>
-                <a href="{{ url_for('file_tools') }}" class="list-group-item list-group-item-action list-group-item-light p-3">File Tools</a>
-                <a href="{{ url_for('algorithm_info') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Algorithm Info</a>
-                <a href="{{ url_for('status') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Status</a>
+                <a href="{{ url_for('index') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Dashboard</a>
+                <a href="{{ url_for('hash_handler') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Hash</a>
+                <a href="{{ url_for('encrypt') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Encrypt</a>
+                <a href="{{ url_for('encrypt_file_handler') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Encrypt File</a>
+                <a href="{{ url_for('decrypt_file_handler') }}" class="list-group-item list-group-item-action list-group-item-light p-3">Decrypt File</a>
             </div>
         </div>
         <!-- /#sidebar-wrapper -->
