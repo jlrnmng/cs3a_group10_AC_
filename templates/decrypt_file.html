@@ -1,13 +1,90 @@
 {% extends "base.html" %}
 
-{% block title %}Asymmetric Encryption - Crypto App{% endblock %}
+{% block title %}Decrypt File - Crypto App{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-body">
-        <h1 class="card-title">Asymmetric Encryption</h1>
-        <p class="card-text">This section will provide tools for asymmetric encryption and decryption.</p>
-        <!-- Add inputs, buttons, and outputs here -->
+        <h1 class="card-title">Decrypt File</h1>
+        <form id="decryptFileForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="file" class="form-label">Select File to Decrypt</label>
+                <input type="file" class="form-control" id="file" name="file" required>
+            </div>
+            <div class="mb-3">
+                <label for="algorithm" class="form-label">Select Algorithm</label>
+                <select class="form-select" id="algorithm" name="algorithm" required>
+                    <option value="" selected disabled>Choose an algorithm</option>
+                    <option value="AES">AES</option>
+                    <option value="DES">DES</option>
+                    <option value="ChaCha20">ChaCha20</option>
+                </select>
+            </div>
+            <div class="mb-3" id="keyDiv">
+                <label for="key" class="form-label">Key</label>
+                <input type="text" class="form-control" id="key" name="key" placeholder="Enter key">
+            </div>
+            <button type="submit" class="btn btn-primary">Decrypt</button>
+        </form>
+        <div class="mt-3" id="downloadLink" style="display:none;">
+            <a href="#" id="downloadFile" class="btn btn-success" download>Download Decrypted File</a>
+        </div>
     </div>
 </div>
+
+<script>
+document.getElementById('decryptFileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('file');
+    const algorithm = document.getElementById('algorithm').value;
+    const key = document.getElementById('key').value;
+
+    if (!fileInput.files.length) {
+        alert('Please select a file.');
+        return;
+    }
+    if (!algorithm) {
+        alert('Please select an algorithm.');
+        return;
+    }
+    if (!key) {
+        alert('Please enter a key.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('algorithm', algorithm);
+    formData.append('key', key);
+
+    const response = await fetch('/decrypt_file', {
+        method: 'POST',
+        body: formData
+    });
+
+    if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const downloadLink = document.getElementById('downloadFile');
+        downloadLink.href = url;
+        downloadLink.download = 'decrypted_' + fileInput.files[0].name;
+        document.getElementById('downloadLink').style.display = 'block';
+    } else {
+        alert('Decryption failed or missing data.');
+    }
+});
+
+// Show or hide key input based on algorithm selection
+document.getElementById('algorithm').addEventListener('change', function() {
+    const keyDiv = document.getElementById('keyDiv');
+    if (this.value === 'AES' || this.value === 'DES' || this.value === 'ChaCha20') {
+        keyDiv.style.display = 'block';
+    } else {
+        keyDiv.style.display = 'none';
+    }
+});
+
+// Initialize key input visibility
+document.getElementById('keyDiv').style.display = 'block';
+</script>
 {% endblock %}

@@ -3,11 +3,238 @@
 {% block title %}index - Crypto App{% endblock %}
 
 {% block content %}
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         <h1 class="card-title">Status</h1>
         <p class="card-text">This section will display the current status of the application and services.</p>
         <!-- Add status indicators and info here -->
     </div>
 </div>
+
+<section id="algorithm-education">
+  <h2>Cryptographic Algorithms Educational Info</h2>
+
+  <div class="accordion" id="algorithmAccordion">
+
+    <h3>Symmetric Algorithms</h3>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAES">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAES" aria-expanded="false" aria-controls="collapseAES">
+          AES (Advanced Encryption Standard)
+        </button>
+      </h2>
+      <div id="collapseAES" class="accordion-collapse collapse" aria-labelledby="headingAES" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Adopted in 2001 as a replacement for DES, AES is a widely used symmetric encryption standard.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+For each block in plaintext:
+  Substitute bytes using S-box
+  Shift rows
+  Mix columns
+  Add round key
+Repeat for multiple rounds
+          </pre>
+          <p><strong>How it works:</strong> AES encrypts data in fixed-size blocks using substitution and permutation steps controlled by a secret key.</p>
+          <p><strong>Common Use Cases:</strong> Secure data transmission, file encryption, VPNs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingDES">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDES" aria-expanded="false" aria-controls="collapseDES">
+          DES (Data Encryption Standard)
+        </button>
+      </h2>
+      <div id="collapseDES" class="accordion-collapse collapse" aria-labelledby="headingDES" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Developed in the 1970s, DES was an early symmetric-key algorithm but is now considered insecure due to short key length.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initial permutation
+For 16 rounds:
+  Expand and permute half-block
+  XOR with subkey
+  Substitute using S-boxes
+  Permute
+Swap halves
+Final permutation
+          </pre>
+          <p><strong>How it works:</strong> DES uses a series of permutations and substitutions on 64-bit blocks with a 56-bit key.</p>
+          <p><strong>Common Use Cases:</strong> Legacy systems, educational purposes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingChaCha20">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChaCha20" aria-expanded="false" aria-controls="collapseChaCha20">
+          ChaCha20
+        </button>
+      </h2>
+      <div id="collapseChaCha20" class="accordion-collapse collapse" aria-labelledby="headingChaCha20" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Designed in 2008 as a fast and secure stream cipher alternative to AES.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initialize state with key, nonce, counter
+For 20 rounds:
+  Quarter round operations on state
+Add original state to result
+Output keystream
+          </pre>
+          <p><strong>How it works:</strong> ChaCha20 generates a pseudorandom keystream which is XORed with plaintext for encryption.</p>
+          <p><strong>Common Use Cases:</strong> Secure communications, VPNs, TLS.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Asymmetric Algorithms</h3>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingRSA">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRSA" aria-expanded="false" aria-controls="collapseRSA">
+          RSA
+        </button>
+      </h2>
+      <div id="collapseRSA" class="accordion-collapse collapse" aria-labelledby="headingRSA" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Developed in 1977, RSA is one of the first public-key cryptosystems widely used for secure data transmission.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Generate large primes p, q
+Compute n = p * q
+Compute totient = (p-1)*(q-1)
+Choose e coprime to totient
+Compute d as modular inverse of e mod totient
+Encrypt: ciphertext = plaintext^e mod n
+Decrypt: plaintext = ciphertext^d mod n
+          </pre>
+          <p><strong>How it works:</strong> RSA uses a pair of keys (public and private) for encryption and decryption based on modular exponentiation.</p>
+          <p><strong>Common Use Cases:</strong> Secure email, digital signatures, key exchange.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingECC">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseECC" aria-expanded="false" aria-controls="collapseECC">
+          ECC (Elliptic Curve Cryptography)
+        </button>
+      </h2>
+      <div id="collapseECC" class="accordion-collapse collapse" aria-labelledby="headingECC" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> ECC emerged in the 1980s as a public-key cryptography approach using elliptic curves, offering similar security with smaller keys.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Select elliptic curve and base point G
+Generate private key d
+Compute public key Q = d * G
+Sign/verify or encrypt/decrypt using curve operations
+          </pre>
+          <p><strong>How it works:</strong> ECC relies on the difficulty of the elliptic curve discrete logarithm problem for security.</p>
+          <p><strong>Common Use Cases:</strong> Mobile devices, SSL/TLS, cryptocurrencies.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Hashing Algorithms</h3>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSHA256">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSHA256" aria-expanded="false" aria-controls="collapseSHA256">
+          SHA-256
+        </button>
+      </h2>
+      <div id="collapseSHA256" class="accordion-collapse collapse" aria-labelledby="headingSHA256" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Part of the SHA-2 family, standardized in 2001, widely used for data integrity and security.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initialize hash values
+Process message in 512-bit chunks:
+  Prepare message schedule
+  Compression function with bitwise operations
+Update hash values
+Output final hash
+          </pre>
+          <p><strong>How it works:</strong> Produces a fixed-size 256-bit hash from input data, resistant to collisions.</p>
+          <p><strong>Common Use Cases:</strong> Digital signatures, certificates, blockchain.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSHA1">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSHA1" aria-expanded="false" aria-controls="collapseSHA1">
+          SHA-1
+        </button>
+      </h2>
+      <div id="collapseSHA1" class="accordion-collapse collapse" aria-labelledby="headingSHA1" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Developed in 1995, now considered weak due to vulnerabilities but still used in legacy systems.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initialize hash values
+Process message in 512-bit chunks:
+  Message schedule
+  Compression function
+Update hash values
+Output final hash
+          </pre>
+          <p><strong>How it works:</strong> Produces a 160-bit hash, vulnerable to collision attacks.</p>
+          <p><strong>Common Use Cases:</strong> Legacy applications, some version control systems.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSHA512">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSHA512" aria-expanded="false" aria-controls="collapseSHA512">
+          SHA-512
+        </button>
+      </h2>
+      <div id="collapseSHA512" class="accordion-collapse collapse" aria-labelledby="headingSHA512" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Part of SHA-2 family, offers higher security with 512-bit hash output.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initialize hash values
+Process message in 1024-bit chunks:
+  Prepare message schedule
+  Compression function with bitwise operations
+Update hash values
+Output final hash
+          </pre>
+          <p><strong>How it works:</strong> Produces a fixed-size 512-bit hash, highly secure against collisions.</p>
+          <p><strong>Common Use Cases:</strong> High-security applications, digital signatures.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingMD5">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMD5" aria-expanded="false" aria-controls="collapseMD5">
+          MD5
+        </button>
+      </h2>
+      <div id="collapseMD5" class="accordion-collapse collapse" aria-labelledby="headingMD5" data-bs-parent="#algorithmAccordion">
+        <div class="accordion-body">
+          <p><strong>Brief History:</strong> Developed in 1991, widely used but now considered broken due to vulnerabilities.</p>
+          <p><strong>Pseudocode:</strong></p>
+          <pre>
+Initialize hash values
+Process message in 512-bit chunks:
+  Non-linear functions and modular additions
+Update hash values
+Output final hash
+          </pre>
+          <p><strong>How it works:</strong> Produces a 128-bit hash, vulnerable to collision attacks.</p>
+          <p><strong>Common Use Cases:</strong> Legacy systems, checksums.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 {% endblock %}

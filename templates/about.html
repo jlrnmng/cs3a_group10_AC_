@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responsive-container-block container">
+  <p class="text-blk team-head-text">
+    Our Team
+  </p>
+  <div class="responsive-container-block">
+    <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 card-container">
+      <div class="card">
+        <div class="team-image-wrapper">
+          <img class="team-member-image" src="{{ url_for('static', filename='uploads/mark.jpg') }}">
+        </div>
+        <p class="text-blk name">
+          Mark
+        </p>
+        <p class="text-blk position">
+          Developer
+        </p>
+        <p class="text-blk feature-text">
+          Expert in cryptography and backend development.
+        </p>
+        <div class="social-icons">
+          <a href="https://www.twitter.com" target="_blank">
+            <img class="twitter-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon.svg">
+          </a>
+          <a href="https://www.facebook.com" target="_blank">
+            <img class="facebook-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon-1.svg">
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 card-container">
+      <div class="card">
+        <div class="team-image-wrapper">
+          <img class="team-member-image" src="{{ url_for('static', filename='uploads/rein.jpg') }}">
+        </div>
+        <p class="text-blk name">
+          Rein
+        </p>
+        <p class="text-blk position">
+          Developer
+        </p>
+        <p class="text-blk feature-text">
+          Specialist in encryption algorithms and UI design.
+        </p>
+        <div class="social-icons">
+          <a href="https://www.twitter.com" target="_blank">
+            <img class="twitter-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon.svg">
+          </a>
+          <a href="https://www.facebook.com" target="_blank">
+            <img class="facebook-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon-1.svg">
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="responsive-cell-block wk-desk-3 wk-ipadp-3 wk-tab-6 wk-mobile-12 card-container">
+      <div class="card">
+        <div class="team-image-wrapper">
+          <img class="team-member-image" src="{{ url_for('static', filename='uploads/rolando.jpg') }}">
+        </div>
+        <p class="text-blk name">
+          Rolando
+        </p>
+        <p class="text-blk position">
+          Developer
+        </p>
+        <p class="text-blk feature-text">
+          Experienced in security protocols and testing.
+        </p>
+        <div class="social-icons">
+          <a href="https://www.twitter.com" target="_blank">
+            <img class="twitter-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon.svg">
+          </a>
+          <a href="https://www.facebook.com" target="_blank">
+            <img class="facebook-icon" src="https://workik-widget-assets.s3.amazonaws.com/widget-assets/images/Icon-1.svg">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="about-info" style="margin-top: 40px;">
+    <h2>Overview</h2>
+    <p>This Flask application provides encryption, decryption, and hashing functionalities for both text and files. It supports a variety of cryptographic algorithms implemented using standard Python libraries such as <code>pycryptodome</code> and <code>hashlib</code>.</p>
+
+    <h2>Supported Algorithms</h2>
+    <h3>Symmetric Algorithms</h3>
+    <ul>
+      <li><strong>AES (Advanced Encryption Standard)</strong></li>
+      <li><strong>DES (Data Encryption Standard)</strong></li>
+      <li><strong>ChaCha20</strong></li>
+    </ul>
+    <p>These algorithms are used for encrypting and decrypting both text and files.</p>
+
+    <h3>Asymmetric Algorithms</h3>
+    <ul>
+      <li><strong>RSA (Rivest–Shamir–Adleman)</strong></li>
+      <li><strong>ECC (Elliptic Curve Cryptography)</strong></li>
+    </ul>
+    <p>Used for text encryption and digital signatures.</p>
+
+    <h3>Hashing Algorithms</h3>
+    <ul>
+      <li>SHA-256</li>
+      <li>SHA-1</li>
+      <li>SHA-512</li>
+      <li>MD5</li>
+    </ul>
+
+    <h2>Usage</h2>
+    <p>Use the Flask UI to encrypt, decrypt, and hash text or files. Select the desired algorithm from the available options. For symmetric algorithms, provide a key for encryption/decryption. For asymmetric algorithms, encryption and decryption are handled with in-memory keys. Hashing functions produce hexadecimal digest outputs.</p>
+
+    <h2>Notes</h2>
+    <ul>
+      <li>This app is intended for educational and demonstration purposes.</li>
+      <li>For production use, secure key management and storage are necessary.</li>
+      <li>ECC encryption is not implemented; ECC is used for signing only.</li>
+    </ul>
+  </section>
+</div>
+{% endblock %}
