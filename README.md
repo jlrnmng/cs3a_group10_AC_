@@ -1,59 +1,95 @@
-# Encryption, Decryption, and Hashing Flask App
+# Encryption, Decryption, and Hashing Flask Application
 
-## Overview
+## Group Members
+- Member 1 john rein manaog 
+- Member 2 mark angelo gonzales 
+- Member 3 rolando perina
+- Member 4
 
-This Flask application provides encryption, decryption, and hashing functionalities for both text and files. It supports a variety of cryptographic algorithms implemented using standard Python libraries such as `pycryptodome` and `hashlib`.
+## Introduction
+This Flask application provides comprehensive encryption, decryption, and hashing functionalities for both text and files. It supports a variety of cryptographic algorithms implemented using standard Python libraries such as `pycryptodome` and `hashlib`. The application is designed for educational and demonstration purposes, showcasing cryptographic techniques and security best practices.
 
-## Supported Algorithms
+## Objectives
+- To implement a secure and user-friendly web application for encryption, decryption, and hashing.
+- To support multiple symmetric and asymmetric cryptographic algorithms.
+- To identify and address security vulnerabilities in the original application.
+- To improve the security posture of the application through enhancements and best practices.
+- To provide clear documentation and setup instructions for users and developers.
 
-### Symmetric Algorithms
-- **AES (Advanced Encryption Standard)**
-- **DES (Data Encryption Standard)**
-- **ChaCha20**
+## Original Application Features
+- Encryption and decryption of text and files using symmetric algorithms: AES, DES, and ChaCha20.
+- Text encryption and digital signatures using asymmetric algorithms: RSA and ECC.
+- Hashing of text and files using SHA-256, SHA-1, SHA-512, and MD5.
+- User interface built with Flask to facilitate cryptographic operations.
+- Runtime key generation for asymmetric algorithms.
+- Error handling with informative messages.
 
-These algorithms are used for encrypting and decrypting both text and files. The implementations use the `pycryptodome` library, with proper padding for block ciphers (AES and DES) and nonce handling for ChaCha20.
+## Security Assessment Findings
+During the security assessment of the original application, the following vulnerabilities were identified:
+- Insecure key management practices, including use of static or weak keys.
+- Lack of input validation leading to potential injection attacks.
+- Insufficient protection against common web vulnerabilities such as CSRF and XSS.
+- Use of deprecated or weak cryptographic algorithms (e.g., MD5, SHA-1).
+- Missing secure transport enforcement (e.g., HTTPS).
+- Inadequate error handling exposing sensitive information.
 
-### Asymmetric Algorithms
-- **RSA (Rivest–Shamir–Adleman)**
-- **ECC (Elliptic Curve Cryptography)**
+## Security Improvements Implemented
+To address the identified vulnerabilities, the following improvements were made:
+- Enhanced key management with secure key derivation and runtime key generation.
+- Input validation and sanitization to prevent injection attacks.
+- Implementation of CSRF protection and secure session management.
+- Removal or deprecation warnings for weak algorithms; promotion of stronger alternatives.
+- Recommendations and configuration for HTTPS enforcement.
+- Improved error handling to avoid leaking sensitive details.
+- Code refactoring to follow security best practices and standards.
 
-These algorithms are used for text encryption and digital signatures. RSA uses PKCS1_OAEP for encryption/decryption, while ECC is used for digital signatures with DSS and SHA256. The `pycryptodome` library is used for these implementations.
+## Penetration Testing Report
+The penetration testing conducted revealed:
+- Vulnerabilities in input fields that could be exploited for injection attacks.
+- Potential for session hijacking due to missing secure cookie flags.
+- Exposure of sensitive error messages in certain failure scenarios.
+- Weaknesses in cryptographic algorithm choices impacting data confidentiality.
+Exploitation steps included crafted input payloads and session manipulation. Recommendations focused on input validation, secure cookie settings, and algorithm upgrades.
 
-### Hashing Algorithms
-- **SHA-256**
-- **SHA-1**
-- **SHA-512**
-- **MD5**
+## Remediation Plan
+The remediation plan involved:
+- Applying input validation and sanitization across all user inputs.
+- Enabling CSRF tokens and secure cookie attributes.
+- Updating cryptographic algorithms to recommended standards.
+- Configuring the application to enforce HTTPS.
+- Enhancing error handling to log errors internally without exposing details to users.
+- Conducting code reviews and security testing to verify fixes.
 
-Hashing is supported for both text and files using Python's built-in `hashlib` library.
+## Technology Stack
+- Python 3.x
+- Flask web framework
+- PyCryptodome library for cryptographic algorithms
+- Hashlib for hashing functions
+- HTML, CSS, and JavaScript for frontend interface
 
-## Usage
+## Setup Instructions
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+2. Create and activate a virtual environment:
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+3. Install required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+4. Run the Flask application:
+   ```
+   flask run
+   ```
+5. Open your web browser and navigate to `http://127.0.0.1:5000` to access the application.
 
-- Use the Flask UI to encrypt, decrypt, and hash text or files.
-- Select the desired algorithm from the available options.
-- For symmetric algorithms, provide a key for encryption/decryption.
-- For asymmetric algorithms, encryption and decryption are handled with in-memory keys.
-- Hashing functions produce hexadecimal digest outputs.
+**Note:** For production deployment, configure HTTPS and secure environment variables accordingly.
 
-## Implementation Details
-
-- Symmetric algorithms use secure key derivation with SHA-256 or MD5 hashing of the provided key.
-- Padding is applied for block ciphers to ensure proper block sizes.
-- Asymmetric keys are generated at runtime and stored in memory.
-- ECC is used for digital signatures rather than encryption.
-- Error handling is implemented to provide informative messages on failures.
-
-## Libraries Used
-
-- `pycryptodome` for cryptographic primitives and algorithms.
-- `hashlib` for hashing functions.
-
-## Notes
-
-- This app is intended for educational and demonstration purposes.
-- For production use, secure key management and storage are necessary.
-- ECC encryption is not implemented; ECC is used for signing only.
-
-## License
+---
 
 MIT License
