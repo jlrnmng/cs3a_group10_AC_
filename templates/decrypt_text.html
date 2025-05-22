@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Decrypt Text - Crypto App{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h1 class="card-title">Decrypt Text</h1>
+        <form id="decryptTextForm" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="decryption_type" id="decryption_type">
+            <div class="mb-3">
+                <label for="algorithm" class="form-label">Select Algorithm</label>
+                <select class="form-select" id="algorithm" name="algorithm" required>
+                    <option value="" selected disabled>Choose an algorithm</option>
+                    <optgroup label="Symmetric">
+                        <option value="AES">AES</option>
+                        <option value="DES">DES</option>
+                        <option value="ChaCha20">ChaCha20</option>
+                    </optgroup>
+                    <optgroup label="Asymmetric">
+                        <option value="RSA">RSA</option>
+                        <option value="EC">ECC (EC)</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="ciphertext" class="form-label">Encrypted Text (Base64)</label>
+                <textarea class="form-control" id="ciphertext" name="ciphertext" rows="4" required></textarea>
+            </div>
+            <div class="mb-3" id="keyDiv">
+                <label for="key" class="form-label">Key (for symmetric algorithms)</label>
+                <input type="text" class="form-control" id="key" name="key" placeholder="Enter key">
+            </div>
+            <div class="mb-3" id="privateKeyDiv">
+                <label for="private_key" class="form-label">Upload Private Key (for asymmetric algorithms)</label>
+                <input type="file" class="form-control" id="private_key" name="private_key" accept=".pem">
+            </div>
+            <button type="submit" class="btn btn-primary">Decrypt</button>
+        </form>
+        <div class="mt-3">
+            <label for="result" class="form-label">Decrypted Result</label>
+            <textarea class="form-control" id="result" rows="4" readonly>{{ plaintext if plaintext else '' }}</textarea>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('decryptTextForm').addEventListener('submit', function(e) {
+    const selectedAlgorithm = document.getElementById('algorithm').value;
+    if (['AES', 'DES', 'ChaCha20'].includes(selectedAlgorithm)) {
+        document.getElementById('decryption_type').value = 'symmetric';
+    } else {
+        document.getElementById('decryption_type').value = 'asymmetric';
+    }
+});
+
+document.getElementById('algorithm').addEventListener('change', function() {
+    const symKey = document.getElementById('keyDiv');
+    const privKey = document.getElementById('privateKeyDiv');
+    if (['AES', 'DES', 'ChaCha20'].includes(this.value)) {
+        symKey.style.display = 'block';
+        privKey.style.display = 'none';
+    } else {
+        symKey.style.display = 'none';
+        privKey.style.display = 'block';
+    }
+});
+
+document.getElementById('keyDiv').style.display = 'none';
+document.getElementById('privateKeyDiv').style.display = 'none';
+</script>
+{% endblock %}
