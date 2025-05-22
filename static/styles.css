@@ -55,3 +55,38 @@ body {
         margin-left: 0;
     }
 }
+
+.about-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.about-info h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.team-members {
+    text-align: center;
+}
+
+.team-members .profiles {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+.team-members .profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #555;
+}
+
+.team-members .profile p {
+    margin-top: 10px;
+    font-weight: bold;
+}

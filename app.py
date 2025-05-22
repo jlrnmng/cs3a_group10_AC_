@@ -4,6 +4,7 @@ from symmetric_algorithms import encrypt_file as sym_encrypt_file, decrypt_file 
 from asymmetric_algorithms import encrypt_text as asym_encrypt, decrypt_text as asym_decrypt
 from hash_functions import hash_text, hash_file
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
 import os
 import io
 
@@ -14,6 +15,26 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/encrypt_text', methods=['GET'])
+def encrypt_text_page():
+    return render_template('encrypt_text.html')
+
+@app.route('/decrypt_file', methods=['GET'])
+def decrypt_file_page():
+    return render_template('decrypt_file.html')
+
+@app.route('/encrypt_file', methods=['GET'])
+def encrypt_file_page():
+    return render_template('encrypt_file.html')
+
+@app.route('/hash_text', methods=['GET'])
+def hash_text_page():
+    return render_template('hash_text.html')
 
 @app.route('/encrypt_text', methods=['POST'])
 def encrypt():
@@ -90,6 +111,11 @@ def hash_file_handler():
         result = hash_file(file_data, algorithm)
         return jsonify({"result": result})
     return "Missing data", 400
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    uploads_dir = os.path.join(app.root_path, 'uploads')
+    return send_from_directory(uploads_dir, filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
