@@ -27,14 +27,16 @@
                 <label for="ciphertext" class="form-label">Encrypted Text (Base64)</label>
                 <textarea class="form-control" id="ciphertext" name="ciphertext" rows="4" required></textarea>
             </div>
-            <div class="mb-3" id="keyDiv">
-                <label for="key" class="form-label">Key (for symmetric algorithms)</label>
-                <input type="text" class="form-control" id="key" name="key" placeholder="Enter key">
+            <div class="mb-3" id="symmetricKeyDiv">
+                <label for="key" class="form-label">Symmetric Key</label>
+                <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
             </div>
-            <div class="mb-3" id="privateKeyDiv">
-                <label for="private_key" class="form-label">Upload Private Key (for asymmetric algorithms)</label>
-                <input type="file" class="form-control" id="private_key" name="private_key" accept=".pem">
+
+            <div class="mb-3 d-none" id="privateKeyDiv">
+                <label for="private_key" class="form-label">Private Key (for Asymmetric)</label>
+                <textarea class="form-control" id="private_key" name="private_key" rows="4" placeholder="Paste private key here"></textarea>
             </div>
+
             <button type="submit" class="btn btn-primary">Decrypt</button>
         </form>
         <div class="mt-3">
@@ -54,19 +56,27 @@ document.getElementById('decryptTextForm').addEventListener('submit', function(e
     }
 });
 
-document.getElementById('algorithm').addEventListener('change', function() {
-    const symKey = document.getElementById('keyDiv');
-    const privKey = document.getElementById('privateKeyDiv');
-    if (['AES', 'DES', 'ChaCha20'].includes(this.value)) {
-        symKey.style.display = 'block';
-        privKey.style.display = 'none';
+document.getElementById('algorithm').addEventListener('change', function () {
+    const symmetricDiv = document.getElementById('symmetricKeyDiv');
+    const privateKeyDiv = document.getElementById('privateKeyDiv');
+    const isAsymmetric = ['RSA', 'ECC', 'EC'].includes(this.value);
+
+    if (isAsymmetric) {
+        symmetricDiv.classList.add('d-none');
+        privateKeyDiv.classList.remove('d-none');
     } else {
-        symKey.style.display = 'none';
-        privKey.style.display = 'block';
+        symmetricDiv.classList.remove('d-none');
+        privateKeyDiv.classList.add('d-none');
     }
 });
 
-document.getElementById('keyDiv').style.display = 'none';
-document.getElementById('privateKeyDiv').style.display = 'none';
+// Set initial visibility state
+document.getElementById('symmetricKeyDiv').classList.remove('d-none');
+document.getElementById('privateKeyDiv').classList.add('d-none');
+</script>
+
+</body>
+</html>
+
 </script>
 {% endblock %}

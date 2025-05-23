@@ -45,14 +45,18 @@ def hash_text_page():
 def encrypt():
     algorithm = request.form['algorithm']
     plaintext = request.form['plaintext']
-    key = request.form.get('key', '')
 
     if algorithm in ["AES", "DES", "ChaCha20"]:
+        key = request.form.get('key', '')
         result = sym_encrypt(plaintext, key, algorithm)
     else:
-        result = asym_encrypt(plaintext, algorithm)
+        public_key = request.form.get('public_key')
+        algorithm = request.form.get('asym_algorithm')
+        result = asym_encrypt(plaintext, public_key, algorithm)
+
 
     return jsonify({"result": result})
+
 
 @app.route('/decrypt_text', methods=['GET', 'POST'])
 def decrypt_text_handler():
@@ -62,17 +66,10 @@ def decrypt_text_handler():
         if not decryption_type:
             return render_template('decrypt_text.html', plaintext="Missing decryption type.")
 
-
-        if decryption_type == 'symmetric':
-            key = request.form['key']
-            algorithm = request.form['algorithm']
-            plaintext = sym_decrypt(ciphertext, key, algorithm)
-
         elif decryption_type == 'asymmetric':
             algorithm = request.form['asym_algorithm']
-            private_key_file = request.files['private_key']
-            private_key_data = private_key_file.read().decode()
-            plaintext = asym_decrypt(ciphertext, private_key_data, algorithm)
+            private_key = request.form.get('private_key') 
+            plaintext = asym_decrypt(ciphertext, private_key, algorithm)
 
         else:
             plaintext = "Invalid decryption type."

@@ -26,10 +26,16 @@
                 <label for="plaintext" class="form-label">Plaintext</label>
                 <textarea class="form-control" id="plaintext" name="plaintext" rows="4" required></textarea>
             </div>
-            <div class="mb-3" id="keyDiv">
-                <label for="key" class="form-label">Key (for symmetric algorithms)</label>
-                <input type="text" class="form-control" id="key" name="key" placeholder="Enter key">
+            <div class="mb-3" id="symmetricKeyDiv">
+                <label for="key" class="form-label">Symmetric Key</label>
+                <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
             </div>
+
+            <div class="mb-3 d-none" id="publicKeyDiv">
+                <label for="public_key" class="form-label">Public Key (for Asymmetric)</label>
+                <textarea class="form-control" id="public_key" name="public_key" rows="4" placeholder="Paste public key here"></textarea>
+            </div>
+
             <button type="submit" class="btn btn-primary">Encrypt</button>
         </form>
         <div class="mt-3">
@@ -45,20 +51,27 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
     const algorithm = document.getElementById('algorithm').value;
     const plaintext = document.getElementById('plaintext').value;
     const key = document.getElementById('key').value;
+    const publicKey = document.getElementById('public_key').value;
 
     if (!algorithm || !plaintext) {
         alert('Please select an algorithm and enter plaintext.');
         return;
     }
 
-    // For asymmetric algorithms, key is not required
     let data = { algorithm, plaintext };
-    if (algorithm === 'AES' || algorithm === 'DES' || algorithm === 'ChaCha20') {
+
+    if (['AES', 'DES', 'ChaCha20'].includes(algorithm)) {
         if (!key) {
-            alert('Please enter a key for symmetric algorithms.');
+            alert('Please enter a symmetric key.');
             return;
         }
         data.key = key;
+    } else {
+        if (!publicKey) {
+            alert('Please enter a public key for asymmetric encryption.');
+            return;
+        }
+        data.public_key = publicKey;
     }
 
     const response = await fetch('/encrypt_text', {
@@ -71,17 +84,25 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
     document.getElementById('result').value = result.result;
 });
 
-// Show or hide key input based on algorithm selection
-document.getElementById('algorithm').addEventListener('change', function() {
-    const keyDiv = document.getElementById('keyDiv');
-    if (this.value === 'AES' || this.value === 'DES' || this.value === 'ChaCha20') {
-        keyDiv.style.display = 'block';
+// Show or hide input fields based on algorithm type
+document.getElementById('algorithm').addEventListener('change', function () {
+    const symmetricDiv = document.getElementById('symmetricKeyDiv');
+    const publicKeyDiv = document.getElementById('publicKeyDiv');
+    const isAsymmetric = ['RSA', 'ECC'].includes(this.value);
+
+    if (isAsymmetric) {
+        symmetricDiv.classList.add('d-none');
+        publicKeyDiv.classList.remove('d-none');
     } else {
-        keyDiv.style.display = 'none';
+        symmetricDiv.classList.remove('d-none');
+        publicKeyDiv.classList.add('d-none');
     }
 });
+</script>
 
-// Initialize key input visibility
-document.getElementById('keyDiv').style.display = 'none';
+
+</body>
+</html>
+
 </script>
 {% endblock %}
