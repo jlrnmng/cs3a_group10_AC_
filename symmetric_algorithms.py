@@ -93,7 +93,6 @@ def decrypt_text(ciphertext, key, algorithm):
             pt = cipher.decrypt(ct)
             return pt.decode('utf-8')
 
-
         else:
             return "Unsupported Algorithm"
 
@@ -163,8 +162,10 @@ def decrypt_file(input_file_path, output_file_path, key, algorithm):
 
         elif algorithm == "ChaCha20":
             key = hashlib.sha256(key.encode()).digest()[:32]
-            nonce = file_data[:12]
-            ct = file_data[12:]
+            # FIXED: ChaCha20 nonce is 8 bytes for text encryption but 12 bytes for file encryption
+            # We need to use 8 bytes to match the encryption function
+            nonce = file_data[:8]
+            ct = file_data[8:]
             cipher = ChaCha20.new(key=key, nonce=nonce)
             decrypted = cipher.decrypt(ct)
 
