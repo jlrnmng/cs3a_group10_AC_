@@ -4,58 +4,96 @@
 
 {% block content %}
 <div class="card">
-    <div class="card-body">
-        <h1 class="card-title">Encrypt Text</h1>
-        <form id="encryptTextForm">
-            <div class="mb-3">
-                <label for="algorithm" class="form-label">Select Algorithm</label>
-                <select class="form-select" id="algorithm" name="algorithm" required>
-                    <option value="" selected disabled>Choose an algorithm</option>
-                    <optgroup label="Symmetric">
-                        <option value="AES">AES</option>
-                        <option value="DES">DES</option>
-                        <option value="ChaCha20">ChaCha20</option>
-                    </optgroup>
-                    <optgroup label="Asymmetric">
-                        <option value="RSA">RSA</option>
-                        <option value="ECC">ECC</option>
-                    </optgroup>
-                </select>
-            </div>
+        <div class="card-body">
+            <h1 class="card-title">Encrypt Text</h1>
+            <form id="encryptTextForm">
+                <div class="mb-3">
+                    <label for="algorithm" class="form-label">Select Algorithm</label>
+                    <select class="form-select" id="algorithm" name="algorithm" required>
+                        <option value="" selected disabled>Choose an algorithm</option>
+                        <optgroup label="Symmetric">
+                            <option value="AES">AES</option>
+                            <option value="DES">DES</option>
+                            <option value="ChaCha20">ChaCha20</option>
+                        </optgroup>
+                        <optgroup label="Asymmetric">
+                            <option value="RSA">RSA</option>
+                            <option value="ECC">ECC</option>
+                        </optgroup>
+                    </select>
+                </div>
 
-            <div id="keyGenerationDiv" class="mb-3 d-none">
-                <label for="key-algo" class="form-label">Select Asymmetric Algorithm for Key Generation</label>
-                <select id="key-algo" class="form-select mb-2">
-                    <option value="RSA">RSA</option>
-                    <option value="ECC">ECC</option>
-                </select>
-                <button type="button" class="btn btn-secondary mb-2" onclick="generateKeys()">Generate Keys</button>
-                <textarea id="public-key" class="form-control mb-2" placeholder="Public Key" readonly></textarea>
-                <textarea id="private-key" class="form-control mb-2" placeholder="Private Key" readonly></textarea>
-                <button type="button" class="btn btn-outline-primary me-2" onclick="copyToClipboard('public-key')">Copy Public Key</button>
-                <button type="button" class="btn btn-outline-primary" onclick="copyToClipboard('private-key')">Copy Private Key</button>
-            </div>
+                <div id="keyGenerationDiv" class="mb-3 d-none">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">Key Generation</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="key-algo" class="form-label">Algorithm for Key Generation</label>
+                                    <select id="key-algo" class="form-select mb-2">
+                                        <option value="RSA">RSA (2048-bit)</option>
+                                        <option value="ECC">ECC (P-256 curve)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="button" class="btn btn-secondary mb-2" onclick="generateKeys()">
+                                        <span id="generateKeysText">Generate Keys</span>
+                                        <span id="generateKeysSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="generatedKeysSection" class="d-none">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="public-key" class="form-label">Generated Public Key</label>
+                                        <textarea id="public-key" class="form-control mb-2" rows="8" placeholder="Public Key will appear here" readonly></textarea>
+                                        <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="copyToClipboard('public-key')">Copy Public Key</button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="private-key" class="form-label">Generated Private Key</label>
+                                        <textarea id="private-key" class="form-control mb-2" rows="8" placeholder="Private Key will appear here" readonly></textarea>
+                                        <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="copyToClipboard('private-key')">Copy Private Key</button>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-success btn-sm" onclick="useGeneratedPublicKey()">Use Generated Public Key for Encryption</button>
+                                    <small id="keyValidationStatus" class="text-muted ms-2"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label for="plaintext" class="form-label">Plaintext</label>
-                <textarea class="form-control" id="plaintext" name="plaintext" rows="4" required></textarea>
-            </div>
+                <div class="mb-3">
+                    <label for="plaintext" class="form-label">Plaintext</label>
+                    <textarea class="form-control" id="plaintext" name="plaintext" rows="4" required></textarea>
+                </div>
 
-            <div class="mb-3 d-none" id="symmetricKeyDiv">
-                <label for="key" class="form-label">Symmetric Key</label>
-                <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
-            </div>
+                <div class="mb-3 d-none" id="symmetricKeyDiv">
+                    <label for="key" class="form-label">Symmetric Key</label>
+                    <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
+                </div>
 
-            <div class="mb-3 d-none" id="publicKeyDiv">
-                <label for="public_key" class="form-label">Public Key (for Asymmetric)</label>
-                <textarea class="form-control" id="public_key" name="public_key" rows="4" placeholder="Paste public key here"></textarea>
-            </div>
+                <div class="mb-3 d-none" id="publicKeyDiv">
+                    <label for="public_key" class="form-label">Public Key (for Asymmetric Encryption)</label>
+                    <textarea class="form-control" id="public_key" name="public_key" rows="6" placeholder="Paste public key here or generate keys above"></textarea>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Encrypt</button>
-        </form>
-        <div class="mt-3">
-            <label for="result" class="form-label">Encrypted Result</label>
-            <textarea class="form-control" id="result" rows="4" readonly></textarea>
+                <button type="submit" class="btn btn-primary">
+                    <span id="encryptButtonText">Encrypt</span>
+                    <span id="encryptButtonSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
+            </form>
+
+            <div class="mt-4">
+                <label for="result" class="form-label">Encrypted Result</label>
+                <textarea class="form-control" id="result" rows="6" readonly></textarea>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('result')" id="copyResultBtn" disabled>Copy Result</button>
+                    <small id="resultInfo" class="text-muted ms-2"></small>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -63,6 +101,13 @@
 <script>
 document.getElementById('encryptTextForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    
+    // Show loading state
+    const encryptButton = document.getElementById('encryptButtonText');
+    const encryptSpinner = document.getElementById('encryptButtonSpinner');
+    encryptButton.textContent = 'Encrypting...';
+    encryptSpinner.classList.remove('d-none');
+    
     const algorithm = document.getElementById('algorithm').value;
     const plaintext = document.getElementById('plaintext').value;
     const key = document.getElementById('key').value;
@@ -70,6 +115,7 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
 
     if (!algorithm || !plaintext) {
         alert('Please select an algorithm and enter plaintext.');
+        resetEncryptButton();
         return;
     }
 
@@ -78,71 +124,275 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
     if (['AES', 'DES', 'ChaCha20'].includes(algorithm)) {
         if (!key) {
             alert('Please enter a symmetric key.');
+            resetEncryptButton();
             return;
         }
         data.algorithm = algorithm;
         data.key = key;
     } else {
+        // For both RSA and ECC, we need a public key
         if (!publicKey) {
-            alert('Please enter a public key for asymmetric encryption.');
+            alert(`Please enter a public key for ${algorithm} encryption or generate keys above.`);
+            resetEncryptButton();
             return;
         }
         data.asym_algorithm = algorithm;
         data.public_key = publicKey;
     }
 
-    const response = await fetch('/encrypt_text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data)
-    });
+    try {
+        console.log('Sending data:', data);
+        
+        const response = await fetch('/encrypt_text', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data)
+        });
 
-    const result = await response.json();
-    document.getElementById('result').value = result.result;
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            console.error('Response was:', responseText);
+            throw new Error('Server returned invalid JSON. Check the console for details.');
+        }
+        
+        if (result.error) {
+            alert('Error: ' + result.error);
+            document.getElementById('result').value = 'Error: ' + result.error;
+            document.getElementById('resultInfo').textContent = '';
+        } else {
+            document.getElementById('result').value = result.result;
+            document.getElementById('copyResultBtn').disabled = false;
+            
+            // Show algorithm info
+            let infoText = `Encrypted with ${result.algorithm || algorithm}`;
+            if (result.note) {
+                infoText += ` - ${result.note}`;
+            }
+            document.getElementById('resultInfo').textContent = infoText;
+        }
+    } catch (error) {
+        console.error('Full error:', error);
+        alert('Network error: ' + error.message);
+        document.getElementById('result').value = 'Network error: ' + error.message;
+        document.getElementById('resultInfo').textContent = '';
+    } finally {
+        resetEncryptButton();
+    }
 });
+
+function resetEncryptButton() {
+    const encryptButton = document.getElementById('encryptButtonText');
+    const encryptSpinner = document.getElementById('encryptButtonSpinner');
+    encryptButton.textContent = 'Encrypt';
+    encryptSpinner.classList.add('d-none');
+}
 
 // Show or hide input fields based on algorithm type
 document.getElementById('algorithm').addEventListener('change', function () {
     const symmetricDiv = document.getElementById('symmetricKeyDiv');
     const publicKeyDiv = document.getElementById('publicKeyDiv');
     const keyGenDiv = document.getElementById('keyGenerationDiv');
-    const isAsymmetric = ['RSA', 'ECC'].includes(this.value);
+
+    const value = this.value;
+    const isAsymmetric = ['RSA', 'ECC'].includes(value);
+
+    // Reset all fields first
+    symmetricDiv.classList.add('d-none');
+    publicKeyDiv.classList.add('d-none');
+    keyGenDiv.classList.add('d-none');
 
     if (isAsymmetric) {
-        symmetricDiv.classList.add('d-none');
-        publicKeyDiv.classList.remove('d-none');
+        // Both RSA and ECC need public keys and can generate keys
         keyGenDiv.classList.remove('d-none');
+        publicKeyDiv.classList.remove('d-none');
+        
+        // Set the key generation algorithm to match the selected encryption algorithm
+        document.getElementById('key-algo').value = value;
     } else {
+        // Symmetric algorithms
         symmetricDiv.classList.remove('d-none');
-        publicKeyDiv.classList.add('d-none');
-        keyGenDiv.classList.add('d-none');
     }
+    
+    // Clear previous results
+    document.getElementById('result').value = '';
+    document.getElementById('resultInfo').textContent = '';
+    document.getElementById('copyResultBtn').disabled = true;
 });
 
-function generateKeys() {
+async function generateKeys() {
+    const generateButton = document.getElementById('generateKeysText');
+    const generateSpinner = document.getElementById('generateKeysSpinner');
     const algo = document.getElementById("key-algo").value;
-    fetch("/generate_keys", {
-        method: "POST",
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: "algorithm=" + encodeURIComponent(algo)
-    })
-    .then(res => res.json())
-    .then(data => {
+    
+    // Show loading state
+    generateButton.textContent = 'Generating...';
+    generateSpinner.classList.remove('d-none');
+    
+    try {
+        const response = await fetch("/generate_keys", {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: "algorithm=" + encodeURIComponent(algo)
+        });
+        
+        const data = await response.json();
+        
         if (data.public_key && data.private_key) {
             document.getElementById("public-key").value = data.public_key;
             document.getElementById("private-key").value = data.private_key;
+            
+            // Show the generated keys section
+            document.getElementById("generatedKeysSection").classList.remove('d-none');
+            
+            // Show validation status
+            const validationStatus = document.getElementById('keyValidationStatus');
+            if (data.validated) {
+                validationStatus.textContent = '✓ Key pair validated successfully';
+                validationStatus.className = 'text-success ms-2';
+            } else {
+                validationStatus.textContent = '⚠ Key pair validation failed';
+                validationStatus.className = 'text-warning ms-2';
+            }
+            
+            // Show success message with key info
+            alert(`Keys generated successfully!\n\nAlgorithm: ${data.algorithm}\nKey Size: ${data.key_size}\nValidation: ${data.validated ? 'PASSED' : 'FAILED'}\n\nYou can now copy them or use the 'Use Generated Public Key' button.`);
         } else {
             alert("Error: " + (data.error || "Unknown error"));
         }
+    } catch (error) {
+        console.error('Key generation error:', error);
+        alert("Network error: " + error.message);
+    } finally {
+        // Reset loading state
+        generateButton.textContent = 'Generate Keys';
+        generateSpinner.classList.add('d-none');
+    }
+}
+
+function useGeneratedPublicKey() {
+    const generatedPublicKey = document.getElementById("public-key").value;
+    const selectedEncryptionAlgo = document.getElementById("algorithm").value;
+    const keyGenAlgo = document.getElementById("key-algo").value;
+    
+    if (!generatedPublicKey) {
+        alert("Please generate keys first!");
+        return;
+    }
+    
+    // Check if the generated key algorithm matches the selected encryption algorithm
+    if (selectedEncryptionAlgo && selectedEncryptionAlgo !== keyGenAlgo) {
+        if (!confirm(`Warning: You generated ${keyGenAlgo} keys but selected ${selectedEncryptionAlgo} for encryption. This may cause errors. Do you want to continue anyway?`)) {
+            return;
+        }
+    }
+    
+    // Copy the generated public key to the encryption field
+    document.getElementById("public_key").value = generatedPublicKey;
+    
+    // Update the encryption algorithm to match the generated key if needed
+    if (!selectedEncryptionAlgo || selectedEncryptionAlgo !== keyGenAlgo) {
+        document.getElementById("algorithm").value = keyGenAlgo;
+        document.getElementById("algorithm").dispatchEvent(new Event('change'));
+    }
+    
+    alert("Generated public key has been copied to the encryption field!");
+}
+
+function copyToClipboard(elementId) {
+    const el = document.getElementById(elementId);
+    if (el.value && el.value.trim()) {
+        el.select();
+        el.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand("copy");
+            
+            // Show temporary feedback
+            const originalPlaceholder = el.placeholder;
+            el.placeholder = "Copied to clipboard!";
+            setTimeout(() => {
+                el.placeholder = originalPlaceholder;
+            }, 2000);
+            
+            // Also show alert for confirmation
+            const contentType = elementId.includes('public') ? 'Public key' : 
+                              elementId.includes('private') ? 'Private key' : 
+                              elementId.includes('result') ? 'Encrypted result' : 'Content';
+            alert(`${contentType} copied to clipboard!`);
+            
+        } catch (err) {
+            console.error('Copy failed:', err);
+            alert("Copy failed. Please manually select and copy the text.");
+        }
+    } else {
+        const contentType = elementId.includes('key') ? 'keys' : 'result';
+        alert(`Nothing to copy! ${elementId.includes('key') ? 'Generate keys first.' : 'Encrypt some text first.'}`);
+    }
+}
+
+// Update key generation algorithm when encryption algorithm changes
+document.getElementById('algorithm').addEventListener('change', function() {
+    const keyAlgoSelect = document.getElementById('key-algo');
+    if (['RSA', 'ECC'].includes(this.value)) {
+        keyAlgoSelect.value = this.value;
+        
+        // Clear previous generated keys when switching algorithms
+        document.getElementById("public-key").value = '';
+        document.getElementById("private-key").value = '';
+        document.getElementById("generatedKeysSection").classList.add('d-none');
+        document.getElementById('keyValidationStatus').textContent = '';
+    }
+});
+
+// Auto-resize textareas
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
     });
-}
+});
 
-function copyToClipboard(id) {
-    const el = document.getElementById(id);
-    el.select();
-    document.execCommand("copy");
-}
-
+// Add validation for key format
+document.getElementById('public_key').addEventListener('blur', function() {
+    const publicKey = this.value.trim();
+    const algorithm = document.getElementById('algorithm').value;
+    
+    if (publicKey && ['RSA', 'ECC'].includes(algorithm)) {
+        // Basic validation for key format
+        const isValidFormat = publicKey.includes('-----BEGIN PUBLIC KEY-----') && 
+                             publicKey.includes('-----END PUBLIC KEY-----');
+        
+        if (!isValidFormat) {
+            this.classList.add('is-invalid');
+            if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                feedback.textContent = 'Invalid public key format. Expected PEM format with BEGIN/END markers.';
+                this.parentNode.appendChild(feedback);
+            }
+        } else {
+            this.classList.remove('is-invalid');
+            const feedback = this.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.remove();
+            }
+        }
+    }
+});
 </script>
-
 {% endblock %}

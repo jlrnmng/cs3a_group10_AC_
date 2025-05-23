@@ -87,10 +87,12 @@ def decrypt_text(ciphertext, key, algorithm):
 
         elif algorithm == "ChaCha20":
             key = hashlib.sha256(key.encode()).digest()[:32]
-            nonce = ciphertext[:12]
-            ct = ciphertext[12:]
+            nonce = ciphertext[:8]
+            ct = ciphertext[8:]
             cipher = ChaCha20.new(key=key, nonce=nonce)
-            return cipher.decrypt(ct).decode()
+            pt = cipher.decrypt(ct)
+            return pt.decode('utf-8')
+
 
         else:
             return "Unsupported Algorithm"

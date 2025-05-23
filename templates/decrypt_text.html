@@ -6,8 +6,7 @@
 <div class="card">
     <div class="card-body">
         <h1 class="card-title">Decrypt Text</h1>
-        <form id="decryptTextForm" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="decryption_type" id="decryption_type">
+        <form id="decryptTextForm">
             <div class="mb-3">
                 <label for="algorithm" class="form-label">Select Algorithm</label>
                 <select class="form-select" id="algorithm" name="algorithm" required>
@@ -19,47 +18,167 @@
                     </optgroup>
                     <optgroup label="Asymmetric">
                         <option value="RSA">RSA</option>
-                        <option value="EC">ECC (EC)</option>
+                        <option value="ECC">ECC</option>
                     </optgroup>
                 </select>
             </div>
+            
             <div class="mb-3">
                 <label for="ciphertext" class="form-label">Encrypted Text (Base64)</label>
-                <textarea class="form-control" id="ciphertext" name="ciphertext" rows="4" required></textarea>
+                <textarea class="form-control" id="ciphertext" name="ciphertext" rows="4" required placeholder="Paste your encrypted text here"></textarea>
             </div>
+            
             <div class="mb-3" id="symmetricKeyDiv">
                 <label for="key" class="form-label">Symmetric Key</label>
                 <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
             </div>
 
             <div class="mb-3 d-none" id="privateKeyDiv">
-                <label for="private_key" class="form-label">Private Key (for Asymmetric)</label>
-                <textarea class="form-control" id="private_key" name="private_key" rows="4" placeholder="Paste private key here"></textarea>
+                <label for="private_key" class="form-label">Private Key (for Asymmetric Decryption)</label>
+                <textarea class="form-control" id="private_key" name="private_key" rows="6" placeholder="Paste private key here (PEM format)"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Decrypt</button>
+            <button type="submit" class="btn btn-primary">
+                <span id="decryptButtonText">Decrypt</span>
+                <span id="decryptButtonSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+            </button>
         </form>
-        <div class="mt-3">
+        
+        <div class="mt-4">
             <label for="result" class="form-label">Decrypted Result</label>
             <textarea class="form-control" id="result" rows="4" readonly>{{ plaintext if plaintext else '' }}</textarea>
+            <div class="mt-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="copyToClipboard('result')" id="copyResultBtn" disabled>Copy Result</button>
+                <small id="resultInfo" class="text-muted ms-2"></small>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-document.getElementById('decryptTextForm').addEventListener('submit', function(e) {
-    const selectedAlgorithm = document.getElementById('algorithm').value;
-    if (['AES', 'DES', 'ChaCha20'].includes(selectedAlgorithm)) {
-        document.getElementById('decryption_type').value = 'symmetric';
+document.getElementById('decryptTextForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    const decryptButton = document.getElementById('decryptButtonText');
+    const decryptSpinner = document.getElementById('decryptButtonSpinner');
+    decryptButton.textContent = 'Decrypting...';
+    decryptSpinner.classList.remove('d-none');
+    
+    const algorithm = document.getElementById('algorithm').value;
+    const ciphertext = document.getElementById('ciphertext').value;
+    const key = document.getElementById('key').value;
+    const privateKey = document.getElementById('private_key').value;
+
+    if (!algorithm || !ciphertext) {
+        alert('Please select an algorithm and enter ciphertext.');
+        resetDecryptButton();
+        return;
+    }
+
+    let data = { ciphertext };
+
+    if (['AES', 'DES', 'ChaCha20'].includes(algorithm)) {
+        if (!key) {
+            alert('Please enter a symmetric key.');
+            resetDecryptButton();
+            return;
+        }
+        data.decryption_type = 'symmetric';
+        data.algorithm = algorithm;
+        data.key = key;
     } else {
-        document.getElementById('decryption_type').value = 'asymmetric';
+        // For both RSA and ECC, we need a private key
+        if (!privateKey) {
+            alert(`Please enter a private key for ${algorithm} decryption.`);
+            resetDecryptButton();
+            return;
+        }
+        data.decryption_type = 'asymmetric';
+        data.asym_algorithm = algorithm;
+        data.private_key = privateKey;
+    }
+
+    try {
+        console.log('Sending decryption data:', { ...data, private_key: data.private_key ? '[PROVIDED]' : 'None' });
+        
+        const response = await fetch('/decrypt_text', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data)
+        });
+
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseText = await response.text();
+        console.log('Raw response:', responseText.substring(0, 200) + '...');
+
+        let result;
+        try {
+            result = JSON.parse(responseText);
+            
+            if (result.error) {
+                alert('Error: ' + result.error);
+                document.getElementById('result').value = 'Error: ' + result.error;
+                document.getElementById('resultInfo').textContent = '';
+            } else {
+                document.getElementById('result').value = result.result || result.plaintext || 'Decryption successful';
+                document.getElementById('copyResultBtn').disabled = false;
+                
+                // Show algorithm info
+                let infoText = `Decrypted with ${algorithm}`;
+                if (result.note) {
+                    infoText += ` - ${result.note}`;
+                }
+                document.getElementById('resultInfo').textContent = infoText;
+            }
+        } catch (parseError) {
+            // If it's not JSON, it might be HTML from the template
+            // Try to extract the plaintext from the HTML response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(responseText, 'text/html');
+            const resultTextarea = doc.getElementById('result');
+            
+            if (resultTextarea && resultTextarea.value) {
+                document.getElementById('result').value = resultTextarea.value;
+                if (resultTextarea.value.startsWith('Error:') || resultTextarea.value.includes('error')) {
+                    document.getElementById('resultInfo').textContent = 'Decryption failed - check the error message';
+                } else {
+                    document.getElementById('copyResultBtn').disabled = false;
+                    document.getElementById('resultInfo').textContent = `Decrypted with ${algorithm}`;
+                }
+            } else {
+                console.error('Failed to parse response:', parseError);
+                alert('Server returned an unexpected response format. Check the console for details.');
+                document.getElementById('result').value = 'Error: Unexpected server response';
+            }
+        }
+    } catch (error) {
+        console.error('Full error:', error);
+        alert('Network error: ' + error.message);
+        document.getElementById('result').value = 'Network error: ' + error.message;
+        document.getElementById('resultInfo').textContent = '';
+    } finally {
+        resetDecryptButton();
     }
 });
 
+function resetDecryptButton() {
+    const decryptButton = document.getElementById('decryptButtonText');
+    const decryptSpinner = document.getElementById('decryptButtonSpinner');
+    decryptButton.textContent = 'Decrypt';
+    decryptSpinner.classList.add('d-none');
+}
+
+// Show or hide input fields based on algorithm type
 document.getElementById('algorithm').addEventListener('change', function () {
     const symmetricDiv = document.getElementById('symmetricKeyDiv');
     const privateKeyDiv = document.getElementById('privateKeyDiv');
-    const isAsymmetric = ['RSA', 'ECC', 'EC'].includes(this.value);
+    const isAsymmetric = ['RSA', 'ECC'].includes(this.value);
 
     if (isAsymmetric) {
         symmetricDiv.classList.add('d-none');
@@ -68,15 +187,70 @@ document.getElementById('algorithm').addEventListener('change', function () {
         symmetricDiv.classList.remove('d-none');
         privateKeyDiv.classList.add('d-none');
     }
+    
+    // Clear previous results
+    document.getElementById('result').value = '';
+    document.getElementById('resultInfo').textContent = '';
+    document.getElementById('copyResultBtn').disabled = true;
 });
+
+function copyToClipboard(elementId) {
+    const el = document.getElementById(elementId);
+    if (el.value && el.value.trim()) {
+        el.select();
+        el.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand("copy");
+            
+            // Show temporary feedback
+            const originalPlaceholder = el.placeholder;
+            el.placeholder = "Copied to clipboard!";
+            setTimeout(() => {
+                el.placeholder = originalPlaceholder;
+            }, 2000);
+            
+            alert('Decrypted result copied to clipboard!');
+            
+        } catch (err) {
+            console.error('Copy failed:', err);
+            alert("Copy failed. Please manually select and copy the text.");
+        }
+    } else {
+        alert('Nothing to copy! Decrypt some text first.');
+    }
+}
 
 // Set initial visibility state
 document.getElementById('symmetricKeyDiv').classList.remove('d-none');
 document.getElementById('privateKeyDiv').classList.add('d-none');
-</script>
 
-</body>
-</html>
-
+// Add validation for private key format
+document.getElementById('private_key').addEventListener('blur', function() {
+    const privateKey = this.value.trim();
+    const algorithm = document.getElementById('algorithm').value;
+    
+    if (privateKey && ['RSA', 'ECC'].includes(algorithm)) {
+        // Basic validation for key format
+        const isValidFormat = privateKey.includes('-----BEGIN PRIVATE KEY-----') && 
+                             privateKey.includes('-----END PRIVATE KEY-----');
+        
+        if (!isValidFormat) {
+            this.classList.add('is-invalid');
+            if (!this.nextElementSibling || !this.nextElementSibling.classList.contains('invalid-feedback')) {
+                const feedback = document.createElement('div');
+                feedback.className = 'invalid-feedback';
+                feedback.textContent = 'Invalid private key format. Expected PEM format with BEGIN/END markers.';
+                this.parentNode.appendChild(feedback);
+            }
+        } else {
+            this.classList.remove('is-invalid');
+            const feedback = this.parentNode.querySelector('.invalid-feedback');
+            if (feedback) {
+                feedback.remove();
+            }
+        }
+    }
+});
 </script>
 {% endblock %}
