@@ -30,7 +30,15 @@
                 <label for="key" class="form-label">Symmetric Key</label>
                 <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
             </div>
-
+            <select id="key-algo">
+                <option value="RSA">RSA</option>
+                <option value="ECC">ECC</option>
+            </select>
+            <button onclick="generateKeys()">Generate Keys</button>
+            <textarea id="public-key" placeholder="Public Key"></textarea>
+            <textarea id="private-key" placeholder="Private Key"></textarea>
+            <button onclick="copyToClipboard('public-key')">Copy Public Key</button>
+            <button onclick="copyToClipboard('private-key')">Copy Private Key</button>
             <div class="mb-3 d-none" id="publicKeyDiv">
                 <label for="public_key" class="form-label">Public Key (for Asymmetric)</label>
                 <textarea class="form-control" id="public_key" name="public_key" rows="4" placeholder="Paste public key here"></textarea>
@@ -98,6 +106,31 @@ document.getElementById('algorithm').addEventListener('change', function () {
         publicKeyDiv.classList.add('d-none');
     }
 });
+
+function generateKeys() {
+    const algo = document.getElementById("key-algo").value;
+    fetch("/generate_keys", {
+        method: "POST",
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: "algorithm=" + encodeURIComponent(algo)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.public_key && data.private_key) {
+            document.getElementById("public-key").value = data.public_key;
+            document.getElementById("private-key").value = data.private_key;
+        } else {
+            alert("Error: " + (data.error || "Unknown error"));
+        }
+    });
+}
+
+function copyToClipboard(id) {
+    const el = document.getElementById(id);
+    el.select();
+    document.execCommand("copy");
+}
+
 </script>
 
 

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_file
 from symmetric_algorithms import encrypt_text as sym_encrypt, decrypt_text as sym_decrypt
 from symmetric_algorithms import encrypt_file as sym_encrypt_file, decrypt_file as sym_decrypt_file
-from asymmetric_algorithms import encrypt_text as asym_encrypt, decrypt_text as asym_decrypt
+from asymmetric_algorithms import encrypt_text as asym_encrypt, decrypt_text as asym_decrypt, generate_key_pair
 from hash_functions import hash_text, hash_file
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
@@ -54,9 +54,19 @@ def encrypt():
         algorithm = request.form.get('asym_algorithm')
         result = asym_encrypt(plaintext, public_key, algorithm)
 
-
     return jsonify({"result": result})
 
+@app.route("/generate_keys", methods=["POST"])
+def generate_keys():
+    algorithm = request.form.get("algorithm")
+    public_key, private_key = generate_key_pair(algorithm)
+    if private_key:
+        return jsonify({
+            "public_key": public_key,
+            "private_key": private_key
+        })
+    else:
+        return jsonify({"error": public_key}), 400
 
 @app.route('/decrypt_text', methods=['GET', 'POST'])
 def decrypt_text_handler():

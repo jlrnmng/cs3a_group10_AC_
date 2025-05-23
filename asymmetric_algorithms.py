@@ -54,3 +54,24 @@ def decrypt_text(ciphertext, private_key_pem, algorithm):
 
     except Exception as e:
         return f"Decryption error: {str(e)}"
+    
+def generate_key_pair(algorithm):
+    try:
+        if algorithm == "RSA":
+            key = RSA.generate(2048)
+            private_key = key.export_key().decode()
+            public_key = key.publickey().export_key().decode()
+            return public_key, private_key
+
+        elif algorithm == "ECC":
+            key = ECC.generate(curve="P-256")
+            private_key = key.export_key(format='PEM')
+            public_key = key.public_key().export_key(format='PEM')
+            return public_key, private_key
+
+        else:
+            return "Unsupported Algorithm", None
+
+    except Exception as e:
+        return f"Key generation error: {str(e)}", None
+
