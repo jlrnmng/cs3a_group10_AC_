@@ -22,23 +22,30 @@
                     </optgroup>
                 </select>
             </div>
+
+            <div id="keyGenerationDiv" class="mb-3 d-none">
+                <label for="key-algo" class="form-label">Select Asymmetric Algorithm for Key Generation</label>
+                <select id="key-algo" class="form-select mb-2">
+                    <option value="RSA">RSA</option>
+                    <option value="ECC">ECC</option>
+                </select>
+                <button type="button" class="btn btn-secondary mb-2" onclick="generateKeys()">Generate Keys</button>
+                <textarea id="public-key" class="form-control mb-2" placeholder="Public Key" readonly></textarea>
+                <textarea id="private-key" class="form-control mb-2" placeholder="Private Key" readonly></textarea>
+                <button type="button" class="btn btn-outline-primary me-2" onclick="copyToClipboard('public-key')">Copy Public Key</button>
+                <button type="button" class="btn btn-outline-primary" onclick="copyToClipboard('private-key')">Copy Private Key</button>
+            </div>
+
             <div class="mb-3">
                 <label for="plaintext" class="form-label">Plaintext</label>
                 <textarea class="form-control" id="plaintext" name="plaintext" rows="4" required></textarea>
             </div>
-            <div class="mb-3" id="symmetricKeyDiv">
+
+            <div class="mb-3 d-none" id="symmetricKeyDiv">
                 <label for="key" class="form-label">Symmetric Key</label>
                 <input type="text" class="form-control" id="key" name="key" placeholder="Enter symmetric key">
             </div>
-            <select id="key-algo">
-                <option value="RSA">RSA</option>
-                <option value="ECC">ECC</option>
-            </select>
-            <button onclick="generateKeys()">Generate Keys</button>
-            <textarea id="public-key" placeholder="Public Key"></textarea>
-            <textarea id="private-key" placeholder="Private Key"></textarea>
-            <button onclick="copyToClipboard('public-key')">Copy Public Key</button>
-            <button onclick="copyToClipboard('private-key')">Copy Private Key</button>
+
             <div class="mb-3 d-none" id="publicKeyDiv">
                 <label for="public_key" class="form-label">Public Key (for Asymmetric)</label>
                 <textarea class="form-control" id="public_key" name="public_key" rows="4" placeholder="Paste public key here"></textarea>
@@ -66,19 +73,21 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
         return;
     }
 
-    let data = { algorithm, plaintext };
+    let data = { plaintext };
 
     if (['AES', 'DES', 'ChaCha20'].includes(algorithm)) {
         if (!key) {
             alert('Please enter a symmetric key.');
             return;
         }
+        data.algorithm = algorithm;
         data.key = key;
     } else {
         if (!publicKey) {
             alert('Please enter a public key for asymmetric encryption.');
             return;
         }
+        data.asym_algorithm = algorithm;
         data.public_key = publicKey;
     }
 
@@ -96,14 +105,17 @@ document.getElementById('encryptTextForm').addEventListener('submit', async func
 document.getElementById('algorithm').addEventListener('change', function () {
     const symmetricDiv = document.getElementById('symmetricKeyDiv');
     const publicKeyDiv = document.getElementById('publicKeyDiv');
+    const keyGenDiv = document.getElementById('keyGenerationDiv');
     const isAsymmetric = ['RSA', 'ECC'].includes(this.value);
 
     if (isAsymmetric) {
         symmetricDiv.classList.add('d-none');
         publicKeyDiv.classList.remove('d-none');
+        keyGenDiv.classList.remove('d-none');
     } else {
         symmetricDiv.classList.remove('d-none');
         publicKeyDiv.classList.add('d-none');
+        keyGenDiv.classList.add('d-none');
     }
 });
 
@@ -133,9 +145,4 @@ function copyToClipboard(id) {
 
 </script>
 
-
-</body>
-</html>
-
-</script>
 {% endblock %}
