@@ -1,10 +1,9 @@
 # Encryption, Decryption, and Hashing Flask Application
 
 ## Group Members
-- Member 1 john rein manaog 
-- Member 2 mark angelo gonzales 
-- Member 3 rolando perina
-- Member 4
+- Member 1: John Rein Manaog
+- Member 2: Mark Angelo Gonzales
+- Member 3: Rolando Perina
 
 ## Introduction
 This Flask application provides comprehensive encryption, decryption, and hashing functionalities for both text and files. It supports a variety of cryptographic algorithms implemented using standard Python libraries such as `pycryptodome` and `hashlib`. The application is designed for educational and demonstration purposes, showcasing cryptographic techniques and security best practices.
@@ -23,6 +22,16 @@ This Flask application provides comprehensive encryption, decryption, and hashin
 - User interface built with Flask to facilitate cryptographic operations.
 - Runtime key generation for asymmetric algorithms.
 - Error handling with informative messages.
+
+## Usage Instructions
+- Access the web interface via your browser at `http://127.0.0.1:5000`.
+- Use the navigation menu to select operations:
+  - Encrypt or decrypt text using symmetric (AES, DES, ChaCha20) or asymmetric (RSA, ECC) algorithms.
+  - Encrypt or decrypt files using symmetric algorithms.
+  - Hash text or files using supported hash functions.
+- For file operations, upload your file and provide the required key or algorithm parameters.
+- Encrypted or decrypted files will be available for download after processing.
+- Uploaded files are temporarily stored in the `uploads` folder within the project directory.
 
 ## Security Assessment Findings
 During the security assessment of the original application, the following vulnerabilities were identified:
@@ -74,17 +83,23 @@ The remediation plan involved:
    cd <repository-directory>
    ```
 2. Create and activate a virtual environment:
-   ```
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+   - On Windows:
+     ```
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
 3. Install required dependencies:
    ```
    pip install -r requirements.txt
    ```
 4. Run the Flask application:
    ```
-   flask run
+   python app.py
    ```
 5. Open your web browser and navigate to `http://127.0.0.1:5000` to access the application.
 
