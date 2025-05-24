@@ -1,110 +1,137 @@
 # Encryption, Decryption, and Hashing Flask Application
 
+[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Group Members
-- Member 1: John Rein Manaog
-- Member 2: Mark Angelo Gonzales
-- Member 3: Rolando Perina
+- John Rein Manaog
+- Mark Angelo Gonzales
+- Rolando Perina
 
 ## Introduction
 This Flask application provides comprehensive encryption, decryption, and hashing functionalities for both text and files. It supports a variety of cryptographic algorithms implemented using standard Python libraries such as `pycryptodome` and `hashlib`. The application is designed for educational and demonstration purposes, showcasing cryptographic techniques and security best practices.
 
+## Features
+- Encrypt/decrypt text and files using symmetric algorithms (AES, DES, ChaCha20)
+- Encrypt/decrypt text using asymmetric algorithms (RSA, ECC)
+- Hash text and files using SHA-256, SHA-1, SHA-512, and MD5
+- User-friendly web interface
+- Runtime key generation
+- Informative error handling
+
 ## Objectives
-- To implement a secure and user-friendly web application for encryption, decryption, and hashing.
-- To support multiple symmetric and asymmetric cryptographic algorithms.
-- To identify and address security vulnerabilities in the original application.
-- To improve the security posture of the application through enhancements and best practices.
-- To provide clear documentation and setup instructions for users and developers.
-
-## Original Application Features
-- Encryption and decryption of text and files using symmetric algorithms: AES, DES, and ChaCha20.
-- Text encryption and digital signatures using asymmetric algorithms: RSA and ECC.
-- Hashing of text and files using SHA-256, SHA-1, SHA-512, and MD5.
-- User interface built with Flask to facilitate cryptographic operations.
-- Runtime key generation for asymmetric algorithms.
-- Error handling with informative messages.
-
-## Usage Instructions
-- Access the web interface via your browser at `http://127.0.0.1:5000`.
-- Use the navigation menu to select operations:
-  - Encrypt or decrypt text using symmetric (AES, DES, ChaCha20) or asymmetric (RSA, ECC) algorithms.
-  - Encrypt or decrypt files using symmetric algorithms.
-  - Hash text or files using supported hash functions.
-- For file operations, upload your file and provide the required key or algorithm parameters.
-- Encrypted or decrypted files will be available for download after processing.
-- Uploaded files are temporarily stored in the `uploads` folder within the project directory.
-
-## Security Assessment Findings
-During the security assessment of the original application, the following vulnerabilities were identified:
-- Insecure key management practices, including use of static or weak keys.
-- Lack of input validation leading to potential injection attacks.
-- Insufficient protection against common web vulnerabilities such as CSRF and XSS.
-- Use of deprecated or weak cryptographic algorithms (e.g., MD5, SHA-1).
-- Missing secure transport enforcement (e.g., HTTPS).
-- Inadequate error handling exposing sensitive information.
-
-## Security Improvements Implemented
-To address the identified vulnerabilities, the following improvements were made:
-- Enhanced key management with secure key derivation and runtime key generation.
-- Input validation and sanitization to prevent injection attacks.
-- Implementation of CSRF protection and secure session management.
-- Removal or deprecation warnings for weak algorithms; promotion of stronger alternatives.
-- Recommendations and configuration for HTTPS enforcement.
-- Improved error handling to avoid leaking sensitive details.
-- Code refactoring to follow security best practices and standards.
-
-## Penetration Testing Report
-The penetration testing conducted revealed:
-- Vulnerabilities in input fields that could be exploited for injection attacks.
-- Potential for session hijacking due to missing secure cookie flags.
-- Exposure of sensitive error messages in certain failure scenarios.
-- Weaknesses in cryptographic algorithm choices impacting data confidentiality.
-Exploitation steps included crafted input payloads and session manipulation. Recommendations focused on input validation, secure cookie settings, and algorithm upgrades.
-
-## Remediation Plan
-The remediation plan involved:
-- Applying input validation and sanitization across all user inputs.
-- Enabling CSRF tokens and secure cookie attributes.
-- Updating cryptographic algorithms to recommended standards.
-- Configuring the application to enforce HTTPS.
-- Enhancing error handling to log errors internally without exposing details to users.
-- Conducting code reviews and security testing to verify fixes.
-
-## Technology Stack
-- Python 3.x
-- Flask web framework
-- PyCryptodome library for cryptographic algorithms
-- Hashlib for hashing functions
-- HTML, CSS, and JavaScript for frontend interface
+- Implement a secure and user-friendly web app for cryptographic operations
+- Support various symmetric and asymmetric cryptographic algorithms
+- Address security vulnerabilities and improve the original application's design
 
 ## Setup Instructions
-1. Clone the repository:
-   ```
+
+1. **Clone the Repository**
+   ```bash
    git clone <repository-url>
    cd <repository-directory>
    ```
-2. Create and activate a virtual environment:
-   - On Windows:
-     ```
+
+2. **Create and Activate a Virtual Environment**
+
+   - On **Windows**:
+     ```bash
      python -m venv venv
      venv\Scripts\activate
      ```
-   - On macOS/Linux:
-     ```
+
+   - On **macOS/Linux**:
+     ```bash
      python3 -m venv venv
      source venv/bin/activate
      ```
-3. Install required dependencies:
-   ```
+
+3. **Install Dependencies**
+   ```bash
    pip install -r requirements.txt
    ```
-4. Run the Flask application:
-   ```
+
+4. **Run the Application**
+   ```bash
    python app.py
    ```
-5. Open your web browser and navigate to `http://127.0.0.1:5000` to access the application.
 
-**Note:** For production deployment, configure HTTPS and secure environment variables accordingly.
+5. **Open in Browser**
+   Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
----
+> **Note**: For production, configure HTTPS and secure environment variables.
 
-MIT License
+## Directory Structure
+```
+├── app.py
+├── asymmetric_algorithms.py
+├── symmetric_algorithms.py
+├── hash_functions.py
+├── requirements.txt
+├── templates/
+│   └── *.html
+├── static/
+│   └── styles and JS
+├── uploads/
+│   └── (temporary files)
+└── README.md
+```
+
+## Security Highlights
+
+### Issues Found
+- Weak keys and insecure storage
+- Input fields vulnerable to injection
+- Lack of CSRF/XSS protections
+- Deprecated hash algorithms (MD5, SHA-1)
+
+### Fixes Implemented
+- Secure key derivation and runtime generation
+- Input validation and sanitization
+- CSRF protection and secure sessions
+- Deprecation of weak algorithms
+- Better error handling and HTTPS recommendation
+
+## Technology Stack
+- Python 3.x
+- Flask
+- PyCryptodome
+- Hashlib
+- HTML/CSS/JS (Bootstrap)
+
+## Walkthrough
+
+### Home Page
+Upon launching the application, the home page provides navigation to all major functionalities: symmetric encryption, asymmetric encryption, and hashing.
+
+### Symmetric Encryption/Decryption
+1. Navigate to the "Symmetric Encryption" section.
+2. Choose an algorithm (AES, DES, or ChaCha20).
+3. Enter your text or upload a file.
+4. Provide a key (if required) or use auto-generate options.
+5. Click "Encrypt" or "Decrypt" to process the data.
+6. Download the resulting file (for file-based operations).
+
+### Asymmetric Encryption/Decryption
+1. Go to "Asymmetric Encryption".
+2. Choose between RSA and ECC.
+3. Input text for encryption or decryption.
+4. Keys are generated on the fly.
+5. View encrypted/decrypted output and optionally save it.
+
+### Hashing
+1. Navigate to "Hashing".
+2. Choose the hashing algorithm (SHA-256, SHA-1, SHA-512, or MD5).
+3. Enter text or upload a file.
+4. Click "Generate Hash".
+5. View the resulting hash output.
+
+This walkthrough helps users quickly utilize the platform’s core functionality for learning or testing encryption, decryption, and hashing.
+
+## Contribution
+
+Contributions are welcome! Please fork the repository, create a feature branch, and submit a pull request.
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
